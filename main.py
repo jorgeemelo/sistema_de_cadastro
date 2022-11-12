@@ -46,8 +46,8 @@ frameBotoes.grid(row=2, column=0, pady=0, padx=0, sticky=NSEW)
 frameDireita = Frame(janela,width=1043, height=300,bg=co1, relief="flat")
 frameDireita.grid(row=3, column=0, pady=0, padx=1, sticky=NSEW)
 
-# abrindo imagem
-app_img = Image.open('logo.png')
+# Cabecalho do programa
+app_img = Image.open('main_files\icon\logo.png') # alterado local do arquivo logo.png #
 app_img = app_img.resize((45, 45))
 app_img = ImageTk.PhotoImage(app_img)
 
