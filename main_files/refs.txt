@@ -1,0 +1,12 @@
+############## Celulas do Cadastro ##############
+# nome = nome
+# nome pai = nome_pai
+# nome mae = nome_mae
+# casados na igreja () sim () nao = casados (BOOLEAN)
+# data de nasc = data_de_nasc
+# padrinho = padrinho
+# madrinha = madrinha
+# celebrante = celebrante
+# dia do batismo = dia_batismo
+
+################################################

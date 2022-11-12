@@ -1,3 +1,5 @@
+LINKS DE REFERENCIA PARA DEV DO SISTEMA:
+
 https://www.pythontutorial.net/tkinter/tkinter-treeview/
 https://icons8.com/icon/set/profile/clouds
 https://www.usandopy.com/tutorial/sistema-de-cadastro-em-python-inventario-domestico/

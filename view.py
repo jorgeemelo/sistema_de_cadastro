@@ -4,48 +4,48 @@ from datetime import datetime
 # Criando conexão
 con = lite.connect('dados.db')
 
-# Inserir inventorio
+# Inserir Cadastros
 def inserir_form(i):
     with con:
         cur = con.cursor()
-        query = "INSERT INTO Inventario (nome, local, descricao, marca, data_da_compra, valor_da_compra, serie) VALUES (?,?,?,?,?,?,?)"
+        query = "INSERT INTO Cadastro (nome, data_de_nasc, nome_pai, nome_mae, casados, padrinho, madrinha) VALUES (?,?,?,?,?,?,?)" # celebrante, dia_batismo (ADICIONAR EM BREVE)
         cur.execute(query, i)
 
 
-# Deletar inventorio
+# Deletar Cadastros
 def deletar_form(i):
     with con:
         cur = con.cursor()
-        query = "DELETE FROM Inventario WHERE id=?"
+        query = "DELETE FROM Cadastro WHERE id=?"
         cur.execute(query, i)
 
 
-# Atualizar inventorio
+# Atualizar Cadastros
 def atualizar_form(i):
     with con:
         cur = con.cursor()
-        query = "UPDATE Inventario SET nome=?, local=?, descricao=?, marca=?, data_da_compra=?, valor_da_compra=?, serie=?, WHERE id=?"
+        query = "UPDATE Cadastro SET nome=?, data_de_nasc=?, nome_pai=?, nome_mae=?, casados=?, padrinho=?, madrinha=?, WHERE id=?" # celebrante, dia_batismo (ADICIONAR EM BREVE)
         cur.execute(query, i)
 
 
-# Ver Inventario
+# Ver Cadastro
 def ver_form():
     lista_itens = []
     with con:
         cur = con.cursor()
-        cur.execute("SELECT * FROM Inventario")
+        cur.execute("SELECT * FROM Cadastro")
         rows = cur.fetchall()
         for row in rows:
             lista_itens.append(row)
     return lista_itens
 
 
-# Ver Iten no inventorio
+# Ver Item no Cadastros
 def ver_iten(id):
     lista_itens = []
     with con:
         cur = con.cursor()
-        cur.execute("SELECT * FROM Inventario WHERE id=?",(id))
+        cur.execute("SELECT * FROM Cadastro WHERE id=?",(id))
         rows = cur.fetchall()
         for row in rows:
             lista_itens.append(row)
