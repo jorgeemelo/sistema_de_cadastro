@@ -1,0 +1,6 @@
+https://www.pythontutorial.net/tkinter/tkinter-treeview/
+https://icons8.com/icon/set/profile/clouds
+https://www.usandopy.com/tutorial/sistema-de-cadastro-em-python-inventario-domestico/
+https://www.hashtagtreinamentos.com/cadastro-de-clientes-no-python
+https://www.hashtagtreinamentos.com/ferramenta-de-cadastro-no-python
+https://stackoverflow.com/questions/48666358/how-to-output-sqlite3-data-in-tkinter-treeview

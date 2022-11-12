@@ -6,7 +6,7 @@ from tkinter import filedialog as fd
 from PIL import Image, ImageTk
 from tkcalendar import*
 
-from view import atualizar_form, deletar_form, inserir_form, ver_form, ver_iten
+from view import atualizar_form, deletar_form, inserir_form, ver_form
 
 ################# cores ###############
 co0 = "#2e2d2b"  # Preta
@@ -25,7 +25,7 @@ co9 = "#e9edf5"   # + verde
 janela = Tk ()
 janela.title ("Sistema de Cadastro para Batismo")
 
-janela.geometry('900x700')
+janela.geometry('900x715')
 janela.configure(background=co9)
 janela.resizable(width=FALSE, height=FALSE)
 
@@ -34,7 +34,7 @@ style.theme_use("clam")
 
 ################# Frames ####################
 
-frameCima = Frame(janela, width=1028, height=50, bg=co1, pady=0, padx=30,  relief="flat")
+frameCima = Frame(janela, width=1028, height=50, bg=co1, pady=0, padx=50,  relief="flat")
 frameCima.grid(row=0, column=0, pady=0, padx=0, sticky=NSEW)
 
 frameMeio = Frame(janela, width=1028, height=285,bg=co1, pady=20, padx=10, relief="flat")
@@ -43,15 +43,15 @@ frameMeio.grid(row=1, column=0,pady=1, padx=0, sticky=NSEW)
 frameBotoes = Frame(janela, width=1028, height=80, pady=0, padx=70, bg=co1, relief="flat")
 frameBotoes.grid(row=2, column=0, pady=0, padx=0, sticky=NSEW)
 
-frameDireita = Frame(janela, width=1028, height=200,bg=co1, relief="flat")
-frameDireita.grid(row=3, column=0, pady=0, padx=0, sticky=NSEW)
+frameDireita = Frame(janela,width=1043, height=300,bg=co1, relief="flat")
+frameDireita.grid(row=3, column=0, pady=0, padx=1, sticky=NSEW)
 
 # abrindo imagem
 app_img = Image.open('logo.png')
 app_img = app_img.resize((45, 45))
 app_img = ImageTk.PhotoImage(app_img)
 
-app_logo = Label(frameCima, image=app_img, text=" Cadastro Batismo", width=900, compound=LEFT, relief="flat", anchor=NW, font=('Verdana 20 bold'),bg=co1, fg=co4 )
+app_logo = Label(frameCima, image=app_img, text=" Cadastro Batismo", width=900, compound=LEFT, relief="flat", anchor=NW, font=('Verdana 20 bold'),bg=co1, fg=co4)
 app_logo.place(x=0, y=0)
 
 global tree
@@ -59,7 +59,7 @@ global tree
 # funcao inserir
 def inserir():
 
-    global imagem, l_imagem
+    global imagem
 
     nome = e_nome.get()
     local = e_local.get()
@@ -193,26 +193,6 @@ def deletar():
     except IndexError:
         messagebox.showerror('Erro', 'Seleciona um dos dados na tabela')
 
-# funcao para abrir imagem
-def ver_imagem():
-
-    global l_imagem, imagem
-
-    treev_dados = tree.focus()
-    treev_dicionario = tree.item(treev_dados)
-    treev_lista = treev_dicionario['values']
-
-    valor = [int(treev_lista[0])]
-    iten = ver_iten(valor)
-    imagem = iten[0][8]
-
-    # abrindo a imagem
-    imagem  = Image.open(imagem)
-    imagem = imagem.resize((170, 170))
-    imagem = ImageTk.PhotoImage(imagem)
-    l_imagem = Label(frameMeio, image=imagem,bg=co1, fg=co4 )
-    l_imagem.place(x=700, y=10)
-
 # criando entradas
 l_nome = Label(frameMeio, text="Nome", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
 l_nome.place(x=20, y=10)
@@ -239,7 +219,7 @@ e_model.place(x=130, y=101)
 l_cal = Label(frameMeio, text="Data da compra", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
 l_cal.place(x=20, y=130)
 
-e_cal = DateEntry(frameMeio, width=12, background='darkblue', foreground='white', borderwidth=2, year=2020)
+e_cal = DateEntry(frameMeio, width=12, background='darkblue', foreground='white', borderwidth=2, year=2022)
 e_cal.place(x=130, y=131)
 
 l_valor = Label(frameMeio, text="Valor da compra", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
@@ -290,7 +270,7 @@ img_item  = Image.open('item.png')
 img_item = img_item.resize((50, 50))
 img_item = ImageTk.PhotoImage(img_item)
 
-botao_ver = Button(frameBotoes, image=img_item, compound=LEFT, anchor=NW, text="   Ver item".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=ver_imagem)
+botao_ver = Button(frameBotoes, image=img_item, compound=LEFT, anchor=NW, text="   Ver item".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0)
 botao_ver.place(x=560, y=11)
 
 # Labels Quantidade total e Valores
@@ -308,9 +288,17 @@ l_qtd_itens.place(x=460, y=92)
 
 # funcao para mostrar
 def mostrar():
-
     # creating a treeview with dual scrollbars
-    tabela_head = ['#Item','Nome',  'Sala/Área','Descrição', 'Marca/Modelo', 'Data da compra','Valor da compra', 'Número de série']
+    tabela_head = [
+        '#Item', 
+        'Nome', 
+        'Sala/Área',
+        'Descrição', 
+        'Marca/Modelo', 
+        'Data da compra', 
+        'Valor da compra', 
+        'Número de série'
+        ]
 
     lista_itens = []
 
@@ -324,7 +312,6 @@ def mostrar():
     # horizontal scrollbar
     hsb = ttk.Scrollbar(frameDireita, orient="horizontal", command=tree.xview)
 
-
     tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
     tree.grid(column=0, row=0, sticky='nsew')
     vsb.grid(column=1, row=0, sticky='ns')
@@ -332,7 +319,7 @@ def mostrar():
     frameDireita.grid_rowconfigure(0, weight=12)
 
     hd=["center","center","center","center","center","center","center", 'center']
-    h=[40,150,100,160,130,100,100, 100]
+    h=[40,150,100,160,130,100,100,100]
     n=0
 
     for col in tabela_head:
@@ -340,7 +327,6 @@ def mostrar():
 
         # adjust the column's width to the header string
         tree.column(col, width=h[n],anchor=hd[n])
-
         n+=1
 
     for item in lista_itens:
