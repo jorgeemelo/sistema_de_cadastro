@@ -17,13 +17,15 @@ sys.setrecursionlimit(10000) # Configuracao do limite de recursao para 10000
 co0 = "#2e2d2b"  # Preta
 co1 = "#feffff"  # branca
 co2 = "#4fa882"  # verde
-co3 = "#38576b"  # padrinho
+co3 = "#38576b"  # valor
 co4 = "#403d3d"   # letra
 co5 = "#e06636"   # - profit
 co6 = "#038cfc"   # azul
 co7 = "#3fbfb9"   # verde
 co8 = "#263238"   # + verde
 co9 = "#e9edf5"   # + verde
+co10 = "#eb4b4b" # + cancelar
+co11 = "#609960" # + confirmar
 
 ################# criando janela ###############
 
@@ -45,13 +47,13 @@ print(j_w)
 frameCima = Frame(janela, width=j_w, height=100, bg=co1, pady=0, padx=50,  relief="flat")
 frameCima.grid(row=0, column=0, pady=0, padx=0, sticky=NSEW)
 
-frameMeio = Frame(janela, width=950, height=285,bg=co1, pady=20, padx=10, relief="flat")
+frameMeio = Frame(janela, width=950, height=305,bg=co1, pady=20, padx=10, relief="flat")
 frameMeio.grid(row=1, column=0,pady=1, padx=0, sticky=NSEW)
 
 frameBotoes = Frame(janela, width=950, height=80, pady=0, padx=95, bg=co1, relief="flat")
 frameBotoes.grid(row=2, column=0, pady=0, padx=0, sticky=NSEW)
 
-frameBottom = Frame(janela,width=950, height=300,bg=co1, relief="flat")
+frameBottom = Frame(janela,width=950, height=280,bg=co1, relief="flat")
 frameBottom.grid(row=3, column=0, pady=0, padx=1, sticky=NSEW)
 
 ################## Cabecalho do programa #####################
@@ -63,24 +65,26 @@ app_img = ImageTk.PhotoImage(app_img)
 app_logo = Label(frameCima, image=app_img, text=" Cadastro Batismo", width=900, compound=LEFT, relief="flat", anchor=NW, font=('Verdana 20 bold'),bg=co1, fg=co4)
 app_logo.place(x=220, y=8)
 
-global tree, valor
+global tree
 
 ####################### FUNCOES #######################
 
 # funcao inserir
 def inserir():
 
-    global tree, valor
+    global tree
 
     nome = e_nome.get()
-    data_de_nasc = e_cal.get()
+    data_de_nasc = e_nasc.get()
     nome_pai = e_nome_pai.get()
     nome_mae = e_nome_mae.get()
     casados = e_casados.get()
     padrinho = e_padrinho.get()
     madrinha = e_madrinha.get()
+    celebrante = e_celebrante.get()
+    dia_batismo = e_dia_batismo.get()
 
-    lista_inserir = [nome, data_de_nasc, nome_pai, nome_mae, casados, padrinho, madrinha]
+    lista_inserir = [nome, data_de_nasc, nome_pai, nome_mae, casados, padrinho, madrinha, celebrante, dia_batismo]
 
     for i in lista_inserir:
         if i=='':
@@ -93,11 +97,13 @@ def inserir():
     messagebox.showinfo('Sucesso', 'Os dados foram inseridos com sucesso')
 
     e_nome.delete(0, 'end')
-    e_cal.delete(0, 'end')
+    e_nasc.delete(0, 'end')
     e_nome_pai.delete(0, 'end')
     e_nome_mae.delete(0, 'end')
     e_padrinho.delete(0, 'end')
     e_madrinha.delete(0, 'end')
+    e_celebrante.delete(0, 'end')
+    e_dia_batismo.delete(0, 'end')
 
     for widget in frameBottom.winfo_children():
         widget.destroy()
@@ -115,34 +121,39 @@ def atualizar():
         valor = treev_lista[0]
 
         e_nome.delete(0, 'end')
-        e_cal.delete(0, 'end')
+        e_nasc.delete(0, 'end')
         e_nome_pai.delete(0, 'end')
         e_nome_mae.delete(0, 'end')
         #e_casados.delete(0, 'end')
         e_padrinho.delete(0, 'end')
         e_madrinha.delete(0, 'end')
+        e_celebrante.delete(0, 'end')
+        e_dia_batismo.delete(0, 'end')
 
         #id = int(treev_lista[0])
         e_nome.insert(0, treev_lista[1])
-        e_cal.insert(0, treev_lista[2])
+        e_nasc.insert(0, treev_lista[2])
         e_nome_pai.insert(0, treev_lista[3])
         e_nome_mae.insert(0, treev_lista[4])
         #e_casados.select(0, treev_lista[5])
         e_padrinho.insert(0, treev_lista[6])
         e_madrinha.insert(0, treev_lista[7])
-
+        e_celebrante.insert(0, treev_lista[8])
+        e_dia_batismo.insert(0, treev_lista[9])
 
         def update():
 
             nome = e_nome.get()
-            data_de_nasc = e_cal.get()
+            data_de_nasc = e_nasc.get()
             nome_pai = e_nome_pai.get()
             nome_mae = e_nome_mae.get()
             casados = e_casados.get()
             padrinho = e_padrinho.get()
             madrinha = e_madrinha.get()
+            celebrante = e_celebrante.get()
+            dia_batismo = e_dia_batismo.get()
 
-            lista_atualizar = [nome, data_de_nasc, nome_pai, nome_mae, casados, padrinho, madrinha]
+            lista_atualizar = [nome, data_de_nasc, nome_pai, nome_mae, casados, padrinho, madrinha, celebrante, dia_batismo]
 
             for i in lista_atualizar:
                 if i=='':
@@ -155,22 +166,42 @@ def atualizar():
             messagebox.showinfo('Sucesso', 'Os dados foram atualizados com sucesso')
 
             e_nome.delete(0, 'end')
-            e_cal.delete(0, 'end')
+            e_nasc.delete(0, 'end')
             e_nome_pai.delete(0, 'end')
             e_nome_mae.delete(0, 'end')
             #e_casados.delete(0, 'end')
             e_padrinho.delete(0, 'end')
             e_madrinha.delete(0, 'end')
+            e_celebrante.delete(0, 'end')
+            e_dia_batismo.delete(0, 'end')
 
             botao_confirmar.destroy()
-
+            botao_cancelar.destroy()
+            
             for widget in frameBottom.winfo_children():
                 widget.destroy()
 
             mostrar()
-
-        botao_confirmar = Button(frameMeio, command=update, text="Confirmar".upper(), width=13, height=1, bg=co2, fg=co1,font=('ivy 8 bold'),relief=RAISED, overrelief=RIDGE)
-        botao_confirmar.place(x=330, y=185)
+        
+        def cancelar():
+            
+            e_nome.delete(0, 'end')
+            e_nasc.delete(0, 'end')
+            e_nome_pai.delete(0, 'end')
+            e_nome_mae.delete(0, 'end')
+            e_padrinho.delete(0, 'end')
+            e_madrinha.delete(0, 'end')
+            e_celebrante.delete(0, 'end')
+            e_dia_batismo.delete(0, 'end')
+            
+            botao_confirmar.destroy()
+            botao_cancelar.destroy()
+            
+        botao_confirmar = Button(frameBotoes, image=img_done, compound=LEFT, anchor=NW, text="   Salvar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10 bold'),bg=co11, fg=co1, command=update)
+        botao_confirmar.place(x=20, y=11)
+        
+        botao_cancelar = Button(frameBotoes, image=img_cancel, compound=LEFT, anchor=NW, text="   Cancelar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10 bold'),bg=co10, fg=co1, command=cancelar)
+        botao_cancelar.place(x=380, y=11)
 
     except IndexError:
         messagebox.showerror('Erro', 'Seleciona um dos dados na tabela')
@@ -204,10 +235,10 @@ e_nome = Entry(frameMeio, width=40, justify='left',relief="solid")
 e_nome.place(x=150, y=11)
 
 # ADICIONAR OUTRA VARIAVEL DE DATA PARA 'DIA_BATISMO'
-l_cal = Label(frameMeio, text="Data de Nascimento", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
-l_cal.place(x=20, y=40)
-e_cal = DateEntry(frameMeio, width=12, background='darkblue', foreground='white', borderwidth=2, year=2022)
-e_cal.place(x=160, y=41)
+l_nasc = Label(frameMeio, text="Data de Nascimento", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
+l_nasc.place(x=20, y=40)
+e_nasc = DateEntry(frameMeio, width=12, background='darkblue', foreground='white', borderwidth=2, year=2022)
+e_nasc.place(x=160, y=41)
 
 l_nome_pai = Label(frameMeio, text="Pai", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
 l_nome_pai.place(x=20, y=70)
@@ -224,8 +255,8 @@ l_casados.place(x=20, y=130)
 e_casados = StringVar('')
 cb_casados = ttk.Combobox(frameMeio, width=10, textvariable=e_casados)
 cb_casados['values'] = ['Sim', 'Não']
-cb_casados.bind('<<ComboboxSelected>>', e_casados.get())
 cb_casados['state'] = 'readonly'
+cb_casados.bind('<<ComboboxSelected>>', e_casados.get())
 cb_casados.place(x=150, y=131)
 
 l_padrinho = Label(frameMeio, text="Padrinho", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
@@ -243,25 +274,29 @@ l_celebrante.place(x=20, y=220)
 e_celebrante = Entry(frameMeio, width=40, justify='left',relief="solid")
 e_celebrante.place(x=150, y=221)
 
-#l_carregar = Label(frameMeio, text="TEXTO", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
-#l_carregar.place(x=20, y=220)
-
-####################### BOTOES #######################
-
-# Botao Carregar
-#botao_carregar = Button(frameMeio, compound=CENTER, anchor=CENTER, text="carregar".upper(), width=30, overrelief=RIDGE,  font=('ivy 8'),bg=co1, fg=co0 )
-#botao_carregar.place(x=130, y=221)
+l_dia_batismo = Label(frameMeio, text="Dia do Batismo", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
+l_dia_batismo.place(x=20, y=250)
+e_dia_batismo = DateEntry(frameMeio, width=12, background='darkblue', foreground='white', borderwidth=2, year=2022)
+e_dia_batismo.place(x=150, y=251)
 
 # Botao Inserir
 img_add = Image.open('main_files\icon\icon_add.png')
 img_add = img_add.resize((50, 50))
 img_add = ImageTk.PhotoImage(img_add)
 
-botao_inserir = Button(frameBotoes, image=img_add, compound=LEFT, anchor=NW, text="   Adicionar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=inserir)
+botao_inserir = Button(frameBotoes, image=img_add, compound=LEFT, anchor=NW, text="   Cadastrar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=inserir)
 botao_inserir.place(x=20, y=11)
 
-# Botao Atualizar
-img_update = Image.open('main_files\icon\icon_update.png')
+# Botao Atualizar/Editar
+img_done = Image.open('main_files\icon\icon_done.png')
+img_done = img_done.resize((50, 50))
+img_done = ImageTk.PhotoImage(img_done)
+
+img_cancel = Image.open('main_files\icon\icon_cancel.png')
+img_cancel = img_cancel.resize((50, 50))
+img_cancel = ImageTk.PhotoImage(img_cancel)
+
+img_update = Image.open('main_files\icon\icon_edit.png')
 img_update = img_update.resize((50, 50))
 img_update = ImageTk.PhotoImage(img_update)
 
@@ -289,7 +324,7 @@ botao_ver.place(x=560, y=11)
 # funcao para criar treeview com os dados de cadastro
 def mostrar():
     # creating a treeview with dual scrollbars
-    tabela_head = ['#ID','Nome', 'Data de Nascimento', 'Nome do Pai', 'Nome da Mãe', 'Casados na Igreja', 'Padrinho', 'Madrinha']
+    tabela_head = ['#ID','Nome', 'Data de Nascimento', 'Nome do Pai', 'Nome da Mãe', 'Casados na Igreja', 'Padrinho', 'Madrinha', 'Celebrante', 'Dia do Batismo']
 
     global tree
 
@@ -307,8 +342,8 @@ def mostrar():
     hsb.grid(column=0, row=1, sticky='ew')
     frameBottom.grid_rowconfigure(0, weight=12)
 
-    h=[30,150,150,150,150,100,100,100]
-    mh=[30,150,150,150,150,100,100,100]
+    h=[30,100,100,100,100,100,100,100,100,100]
+    mh=[30,100,100,100,100,100,100,100,100,100]
     n=0
 
     for col in tabela_head:
@@ -329,10 +364,9 @@ def mostrar():
 
     count = 0
     for items in lista_itens:
-        tree.insert(parent='', index='end', iid = count, values=(items[0], items[1], items[2], items[3], items[4], items[5], items[6], items[7]))
+        tree.insert(parent='', index='end', iid = count, values=(items[0], items[1], items[2], items[3], items[4], items[5], items[6], items[7], items[8], items[9]))
         count += 1
 
 mostrar()
-
 
 janela.mainloop()

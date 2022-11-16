@@ -8,7 +8,7 @@ con = lite.connect('dados.db')
 def inserir_form(i):
     with con:
         cur = con.cursor()
-        query = "INSERT INTO Cadastro (nome, data_de_nasc, nome_pai, nome_mae, casados, padrinho, madrinha) VALUES (?,?,?,?,?,?,?)" # celebrante, dia_batismo (ADICIONAR EM BREVE)
+        query = "INSERT INTO Cadastro (nome, data_de_nasc, nome_pai, nome_mae, casados, padrinho, madrinha, celebrante, dia_batismo) VALUES (?,?,?,?,?,?,?,?,?)"
         cur.execute(query, i)
 
 
@@ -24,7 +24,7 @@ def deletar_form(i):
 def atualizar_form(i):
     with con:
         cur = con.cursor()
-        query = "UPDATE Cadastro SET nome=?, data_de_nasc=?, nome_pai=?, nome_mae=?, casados=?, padrinho=?, madrinha=?" # celebrante, dia_batismo (ADICIONAR EM BREVE)
+        query = "UPDATE Cadastro SET nome=?, data_de_nasc=?, nome_pai=?, nome_mae=?, casados=?, padrinho=?, madrinha=?, celebrante=?, dia_batismo=?"
         cur.execute(query, i)
 
 
