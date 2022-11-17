@@ -65,14 +65,14 @@ app_img = ImageTk.PhotoImage(app_img)
 app_logo = Label(frameCima, image=app_img, text=" Cadastro Batismo", width=900, compound=LEFT, relief="flat", anchor=NW, font=('Verdana 20 bold'),bg=co1, fg=co4)
 app_logo.place(x=220, y=8)
 
-global tree
+global tree, values
 
 ####################### FUNCOES #######################
 
 # funcao inserir
 def inserir():
 
-    global tree
+    global tree, values
 
     nome = e_nome.get()
     data_de_nasc = e_nasc.get()
@@ -112,7 +112,7 @@ def inserir():
 
 # funcao atualizar
 def atualizar():
-
+    
     try:
         treev_dados = tree.focus()
         treev_dicionario = tree.item(treev_dados)
@@ -130,7 +130,7 @@ def atualizar():
         e_celebrante.delete(0, 'end')
         e_dia_batismo.delete(0, 'end')
 
-        #id = int(treev_lista[0])
+        id = int(treev_lista[0])
         e_nome.insert(0, treev_lista[1])
         e_nasc.insert(0, treev_lista[2])
         e_nome_pai.insert(0, treev_lista[3])
@@ -153,7 +153,7 @@ def atualizar():
             celebrante = e_celebrante.get()
             dia_batismo = e_dia_batismo.get()
 
-            lista_atualizar = [nome, data_de_nasc, nome_pai, nome_mae, casados, padrinho, madrinha, celebrante, dia_batismo]
+            lista_atualizar = [nome, data_de_nasc, nome_pai, nome_mae, casados, padrinho, madrinha, celebrante, dia_batismo, id]
 
             for i in lista_atualizar:
                 if i=='':
@@ -326,7 +326,7 @@ def mostrar():
     # creating a treeview with dual scrollbars
     tabela_head = ['#ID','Nome', 'Data de Nascimento', 'Nome do Pai', 'Nome da Mãe', 'Casados na Igreja', 'Padrinho', 'Madrinha', 'Celebrante', 'Dia do Batismo']
 
-    global tree
+    global tree, values, id
 
     tree = ttk.Treeview(frameBottom, selectmode="extended",columns=tabela_head, show="headings")
     

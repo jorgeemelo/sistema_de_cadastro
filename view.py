@@ -24,7 +24,7 @@ def deletar_form(i):
 def atualizar_form(i):
     with con:
         cur = con.cursor()
-        query = "UPDATE Cadastro SET nome=?, data_de_nasc=?, nome_pai=?, nome_mae=?, casados=?, padrinho=?, madrinha=?, celebrante=?, dia_batismo=?"
+        query = "UPDATE Cadastro SET nome=?, data_de_nasc=?, nome_pai=?, nome_mae=?, casados=?, padrinho=?, madrinha=?, celebrante=?, dia_batismo=? WHERE id=?"
         cur.execute(query, i)
 
 
