@@ -41,10 +41,7 @@ style.theme_use("clam")
 
 ################# Frames ####################
 
-j_w = janela.winfo_width()
-print(j_w)
-
-frameCima = Frame(janela, width=j_w, height=100, bg=co1, pady=0, padx=50,  relief="flat")
+frameCima = Frame(janela, width=950, height=100, bg=co1, pady=0, padx=50,  relief="flat")
 frameCima.grid(row=0, column=0, pady=0, padx=0, sticky=NSEW)
 
 frameMeio = Frame(janela, width=950, height=305,bg=co1, pady=20, padx=10, relief="flat")
@@ -174,7 +171,9 @@ def atualizar():
             e_madrinha.delete(0, 'end')
             e_celebrante.delete(0, 'end')
             e_dia_batismo.delete(0, 'end')
-
+            #
+            # RECRIAR BOTÃO E LABEL PARA OCULTAR DEL E REG
+            #
             botao_confirmar.destroy()
             botao_cancelar.destroy()
             
@@ -194,14 +193,18 @@ def atualizar():
             e_celebrante.delete(0, 'end')
             e_dia_batismo.delete(0, 'end')
             
-            botao_confirmar.destroy()
-            botao_cancelar.destroy()
+            messagebox.showinfo('Cancelado com sucesso', 'Edição cancelada. Os dados de cadastro não foram alterados.')
             
+            botao_confirmar.destroy()
+            botao_cancelar.destroy()        
+        #
+        # OBS: RECRIAR BOTÃO E LABEL PARA OCULTAR DEL E REG
+        #    
         botao_confirmar = Button(frameBotoes, image=img_done, compound=LEFT, anchor=NW, text="   Salvar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10 bold'),bg=co11, fg=co1, command=update)
         botao_confirmar.place(x=20, y=11)
         
         botao_cancelar = Button(frameBotoes, image=img_cancel, compound=LEFT, anchor=NW, text="   Cancelar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10 bold'),bg=co10, fg=co1, command=cancelar)
-        botao_cancelar.place(x=380, y=11)
+        botao_cancelar.place(x=380, y=11) # OBS: COLOCAR NO LUGAR DO BOTÃO EDITAR #
 
     except IndexError:
         messagebox.showerror('Erro', 'Seleciona um dos dados na tabela')
@@ -234,7 +237,6 @@ l_nome.place(x=20, y=10)
 e_nome = Entry(frameMeio, width=40, justify='left',relief="solid")
 e_nome.place(x=150, y=11)
 
-# ADICIONAR OUTRA VARIAVEL DE DATA PARA 'DIA_BATISMO'
 l_nasc = Label(frameMeio, text="Data de Nascimento", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
 l_nasc.place(x=20, y=40)
 e_nasc = DateEntry(frameMeio, width=12, background='darkblue', foreground='white', borderwidth=2, year=2022)
