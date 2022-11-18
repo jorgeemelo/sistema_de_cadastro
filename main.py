@@ -10,7 +10,7 @@ from tkcalendar import*
 import sys
 from view import*
 
-sys.setrecursionlimit(10000) # Configuracao do limite de recursao para 10000
+# sys.setrecursionlimit(10000) # Configuracao do limite de recursao para 10000
 
 ################# cores ###############
 
@@ -32,7 +32,7 @@ co11 = "#609960" # + confirmar
 janela = Tk ()
 janela.title ("Sistema de Cadastro para Batismo")
 
-janela.geometry('950x765')
+janela.geometry('950x700')
 janela.configure(background=co9)
 janela.resizable(width=FALSE, height=FALSE)
 
@@ -41,10 +41,10 @@ style.theme_use("clam")
 
 ################# Frames ####################
 
-frameCima = Frame(janela, width=950, height=100, bg=co1, pady=0, padx=50,  relief="flat")
+frameCima = Frame(janela, width=950, height=60, bg=co1, pady=0, padx=50,  relief="flat")
 frameCima.grid(row=0, column=0, pady=0, padx=0, sticky=NSEW)
 
-frameMeio = Frame(janela, width=950, height=305,bg=co1, pady=20, padx=10, relief="flat")
+frameMeio = Frame(janela, width=950, height=305,bg=co1, pady=10, padx=50, relief="flat")
 frameMeio.grid(row=1, column=0,pady=1, padx=0, sticky=NSEW)
 
 frameBotoes = Frame(janela, width=950, height=80, pady=0, padx=95, bg=co1, relief="flat")
@@ -55,12 +55,15 @@ frameBottom.grid(row=3, column=0, pady=0, padx=1, sticky=NSEW)
 
 ################## Cabecalho do programa #####################
 
-app_img = Image.open('main_files\icon\icon_logo.png') # OBS: alterar logo do programa
-app_img = app_img.resize((80, 80))
+app_logo = Label(frameCima, image='', text="Cadastro Batismo", width=900, compound=LEFT, relief="flat", anchor=NW, font=('Verdana 20 bold'),bg=co1, fg=co4)
+app_logo.place(x=30, y=8)
+
+app_img = Image.open('main_files\icon\icon_logo.png')
+app_img = app_img.resize((280, 280))
 app_img = ImageTk.PhotoImage(app_img)
 
-app_logo = Label(frameCima, image=app_img, text=" Cadastro Batismo", width=900, compound=LEFT, relief="flat", anchor=NW, font=('Verdana 20 bold'),bg=co1, fg=co4)
-app_logo.place(x=220, y=8)
+img_logo = Label(frameMeio, image=app_img, text=" ", width=900, compound=CENTER, relief="flat", anchor=NW,bg=co1)
+img_logo.place(x=550, y=0)
 
 global tree, values
 
@@ -171,9 +174,10 @@ def atualizar():
             e_madrinha.delete(0, 'end')
             e_celebrante.delete(0, 'end')
             e_dia_batismo.delete(0, 'end')
-            #
-            # RECRIAR BOTÃO E LABEL PARA OCULTAR DEL E REG
-            #
+
+            func_edit.destroy()
+            blank_tree.destroy()
+            blank_buttons.destroy()
             botao_confirmar.destroy()
             botao_cancelar.destroy()
             
@@ -195,16 +199,34 @@ def atualizar():
             
             messagebox.showinfo('Cancelado com sucesso', 'Edição cancelada. Os dados de cadastro não foram alterados.')
             
+            func_edit.destroy()
+            blank_tree.destroy()
+            blank_buttons.destroy()
             botao_confirmar.destroy()
             botao_cancelar.destroy()        
-        #
-        # OBS: RECRIAR BOTÃO E LABEL PARA OCULTAR DEL E REG
-        #    
+
+        func_edit = Label(frameCima, text="Edição de Cadastro", width=900, compound=LEFT, relief="flat", anchor=NW, font=('Verdana 20 bold'),bg=co1, fg=co4)
+        func_edit.place(x=30, y=8)
+        
+        blank_tree = Image.open('main_files\icon\img_blank.png')
+        blank_tree = blank_tree.resize((80, 280))
+        blank_tree = ImageTk.PhotoImage(blank_tree)
+
+        blank_tree = Label(frameBottom, image=blank_tree, text=" ", width=950, compound=CENTER, relief="flat", anchor=NW,bg=co1)
+        blank_tree.place(x=1, y=1)
+
+        blank_buttons = Image.open('main_files\icon\img_blank.png')
+        blank_buttons = blank_buttons.resize((80, 80))
+        blank_buttons = ImageTk.PhotoImage(blank_buttons)
+
+        blank_buttons = Label(frameBotoes, image=blank_buttons, text="", width=400, compound=LEFT, relief="flat", anchor=NW,bg=co1)
+        blank_buttons.place(x=380, y=11)
+
         botao_confirmar = Button(frameBotoes, image=img_done, compound=LEFT, anchor=NW, text="   Salvar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10 bold'),bg=co11, fg=co1, command=update)
         botao_confirmar.place(x=20, y=11)
         
         botao_cancelar = Button(frameBotoes, image=img_cancel, compound=LEFT, anchor=NW, text="   Cancelar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10 bold'),bg=co10, fg=co1, command=cancelar)
-        botao_cancelar.place(x=380, y=11) # OBS: COLOCAR NO LUGAR DO BOTÃO EDITAR #
+        botao_cancelar.place(x=200, y=11)
 
     except IndexError:
         messagebox.showerror('Erro', 'Seleciona um dos dados na tabela')
@@ -290,6 +312,7 @@ botao_inserir = Button(frameBotoes, image=img_add, compound=LEFT, anchor=NW, tex
 botao_inserir.place(x=20, y=11)
 
 # Botao Atualizar/Editar
+
 img_done = Image.open('main_files\icon\icon_done.png')
 img_done = img_done.resize((50, 50))
 img_done = ImageTk.PhotoImage(img_done)
@@ -318,7 +341,7 @@ img_item  = Image.open('main_files\icon\icon_item.png')
 img_item = img_item.resize((50, 50))
 img_item = ImageTk.PhotoImage(img_item)
 
-botao_ver = Button(frameBotoes, image=img_item, compound=LEFT, anchor=NW, text="   NULL".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0)
+botao_ver = Button(frameBotoes, image=img_item, compound=LEFT, anchor=NW, text="   Registros".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0)
 botao_ver.place(x=560, y=11)
 
 ####################### TELA DE PRINT DOS REGISTROS DO DB #######################
