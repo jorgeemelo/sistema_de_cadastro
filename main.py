@@ -8,7 +8,82 @@ from tkinter import filedialog as fd
 from PIL import Image, ImageTk
 from tkcalendar import*
 import sys
-from view import*
+import pandas as pd
+from reportlab import*
+import webbrowser
+
+# Criando banco de dados
+
+def conecta_bd():
+    con = lite.connect('dados.db')
+
+def desconecta_bd():
+    con.close()
+    
+def criar_bd():
+    conecta_bd()
+    
+    cur = con.cursor()
+    cur.execute(
+            "CREATE TABLE IF NOT EXISTS Cadastro (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, data_de_nasc DATE, nome_pai TEXT, nome_mae TEXT, casados TEXT, padrinho TEXT, madrinha TEXT, celebrante TEXT, dia_batismo DATE)"
+            )
+        
+
+########### VIEW.py ##############
+
+import sqlite3 as lite
+from datetime import datetime
+
+# Criando conexão
+con = lite.connect('dados.db')
+
+# Inserir Cadastros
+def inserir_form(i):
+    with con:
+        cur = con.cursor()
+        query = "INSERT INTO Cadastro (nome, data_de_nasc, nome_pai, nome_mae, casados, padrinho, madrinha, celebrante, dia_batismo) VALUES (?,?,?,?,?,?,?,?,?)"
+        cur.execute(query, i)
+
+
+# Deletar Cadastros
+def deletar_form(i):
+    with con:
+        cur = con.cursor()
+        query = "DELETE FROM Cadastro WHERE id=?"
+        cur.execute(query, i)
+
+
+# Atualizar Cadastros
+def atualizar_form(i):
+    with con:
+        cur = con.cursor()
+        query = "UPDATE Cadastro SET nome=?, data_de_nasc=?, nome_pai=?, nome_mae=?, casados=?, padrinho=?, madrinha=?, celebrante=?, dia_batismo=? WHERE id=?"
+        cur.execute(query, i)
+
+
+# Ver Cadastro
+def ver_form():
+    lista_itens = []
+    with con:
+        cur = con.cursor()
+        cur.execute("SELECT * FROM Cadastro")
+        rows = cur.fetchall()
+        for row in rows:
+            lista_itens.append(row)
+    return lista_itens
+
+
+# Ver Item no Cadastros
+def ver_iten(id):
+    lista_itens = []
+    with con:
+        cur = con.cursor()
+        cur.execute("SELECT * FROM Cadastro WHERE id=?",(id))
+        rows = cur.fetchall()
+        for row in rows:
+            lista_itens.append(row)
+    return lista_itens
+
 
 # sys.setrecursionlimit(10000) # Configuracao do limite de recursao para 10000
 
@@ -252,6 +327,33 @@ def deletar():
     except IndexError:
         messagebox.showerror('Erro', 'Seleciona um dos dados na tabela')
 
+# funcao criar relatorio PDF
+
+def abrir_relatorios():
+    webbrowser.open("Cadastros.html")
+
+def criar_relatorio():
+
+    con = lite.connect('dados.db')
+    cur = con.cursor()
+   
+    # Inserir dados na tabela:
+    cur.execute("SELECT * FROM Cadastro")
+    
+    lista_itens = cur.fetchall()
+    print(lista_itens)
+    lista_itens=pd.DataFrame(lista_itens, columns=['id', 'nome', 'data_de_nasc', 'nome_pai', 'nome_mae', 'casados', 'padrinho', 'madrinha', 'celebrante', 'dia_batismo'])
+    lista_itens.to_html('Cadastros.html')
+    
+    # Commit das mudanças:
+    con.commit()
+
+    # Fechar o banco de dados:
+    con.close()
+    
+    # Abre o navegador padrao exibindo o relatorio:
+    abrir_relatorios()
+    
 ####################### VARIAVEIS DE ENTRADA #######################
 
 l_nome = Label(frameMeio, text="Nome", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
@@ -336,12 +438,12 @@ img_delete = ImageTk.PhotoImage(img_delete)
 botao_deletar = Button(frameBotoes, image=img_delete, compound=LEFT, anchor=NW, text="   Excluir".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=deletar)
 botao_deletar.place(x=380, y=11)
 
-# Botao ver Item
+# Botao ver Registros
 img_item  = Image.open('main_files\icon\icon_item.png')
 img_item = img_item.resize((50, 50))
 img_item = ImageTk.PhotoImage(img_item)
 
-botao_ver = Button(frameBotoes, image=img_item, compound=LEFT, anchor=NW, text="   Registros".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0)
+botao_ver = Button(frameBotoes, image=img_item, compound=LEFT, anchor=NW, text="   Registros".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=criar_relatorio)
 botao_ver.place(x=560, y=11)
 
 ####################### TELA DE PRINT DOS REGISTROS DO DB #######################
@@ -392,6 +494,7 @@ def mostrar():
         tree.insert(parent='', index='end', iid = count, values=(items[0], items[1], items[2], items[3], items[4], items[5], items[6], items[7], items[8], items[9]))
         count += 1
 
+criar_bd()
 mostrar()
 
 janela.mainloop()
