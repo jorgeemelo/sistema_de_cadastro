@@ -7,13 +7,18 @@ from tkinter import messagebox
 from tkinter import filedialog as fd
 from PIL import Image, ImageTk
 from tkcalendar import*
-import sys
 import pandas as pd
-from reportlab import*
 import webbrowser
+from platypus import*
+import sqlite3 as lite
+from datetime import datetime
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+#from reportlab.pdfbase import pdfmetrics
+#from reportlab.pdfbase.ttfonts import TTFont
 
 # Criando banco de dados
-
+con = lite.connect('dados.db')
 def conecta_bd():
     con = lite.connect('dados.db')
 
@@ -28,41 +33,35 @@ def criar_bd():
             "CREATE TABLE IF NOT EXISTS Cadastro (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, data_de_nasc DATE, nome_pai TEXT, nome_mae TEXT, casados TEXT, padrinho TEXT, madrinha TEXT, celebrante TEXT, dia_batismo DATE)"
             )
         
-
 ########### VIEW.py ##############
-
-import sqlite3 as lite
-from datetime import datetime
-
-# Criando conexão
-con = lite.connect('dados.db')
 
 # Inserir Cadastros
 def inserir_form(i):
+
     with con:
         cur = con.cursor()
         query = "INSERT INTO Cadastro (nome, data_de_nasc, nome_pai, nome_mae, casados, padrinho, madrinha, celebrante, dia_batismo) VALUES (?,?,?,?,?,?,?,?,?)"
         cur.execute(query, i)
 
-
 # Deletar Cadastros
 def deletar_form(i):
+
     with con:
         cur = con.cursor()
         query = "DELETE FROM Cadastro WHERE id=?"
         cur.execute(query, i)
 
-
 # Atualizar Cadastros
 def atualizar_form(i):
+
     with con:
         cur = con.cursor()
         query = "UPDATE Cadastro SET nome=?, data_de_nasc=?, nome_pai=?, nome_mae=?, casados=?, padrinho=?, madrinha=?, celebrante=?, dia_batismo=? WHERE id=?"
         cur.execute(query, i)
 
-
 # Ver Cadastro
 def ver_form():
+    
     lista_itens = []
     with con:
         cur = con.cursor()
@@ -72,9 +71,9 @@ def ver_form():
             lista_itens.append(row)
     return lista_itens
 
-
 # Ver Item no Cadastros
 def ver_iten(id):
+
     lista_itens = []
     with con:
         cur = con.cursor()
@@ -83,7 +82,6 @@ def ver_iten(id):
         for row in rows:
             lista_itens.append(row)
     return lista_itens
-
 
 # sys.setrecursionlimit(10000) # Configuracao do limite de recursao para 10000
 
@@ -115,6 +113,7 @@ style = ttk.Style(janela)
 style.theme_use("clam")
 
 ################# Frames ####################
+###########-> DEIXAR RESPONSIVO <-###########
 
 frameCima = Frame(janela, width=950, height=60, bg=co1, pady=0, padx=50,  relief="flat")
 frameCima.grid(row=0, column=0, pady=0, padx=0, sticky=NSEW)
@@ -124,6 +123,7 @@ frameMeio.grid(row=1, column=0,pady=1, padx=0, sticky=NSEW)
 
 frameBotoes = Frame(janela, width=950, height=80, pady=0, padx=95, bg=co1, relief="flat")
 frameBotoes.grid(row=2, column=0, pady=0, padx=0, sticky=NSEW)
+#frameBotoes.place(relx=0.1,rely=0.1, relwidth=0.5,relheight=0.5)
 
 frameBottom = Frame(janela,width=950, height=280,bg=co1, relief="flat")
 frameBottom.grid(row=3, column=0, pady=0, padx=1, sticky=NSEW)
@@ -140,7 +140,7 @@ app_img = ImageTk.PhotoImage(app_img)
 img_logo = Label(frameMeio, image=app_img, text=" ", width=900, compound=CENTER, relief="flat", anchor=NW,bg=co1)
 img_logo.place(x=550, y=0)
 
-global tree, values
+global tree
 
 ####################### FUNCOES #######################
 
@@ -193,13 +193,13 @@ def atualizar():
         treev_dicionario = tree.item(treev_dados)
         treev_lista = treev_dicionario['values']
 
-        valor = treev_lista[0]
+    #    valor = treev_lista[0]
 
         e_nome.delete(0, 'end')
         e_nasc.delete(0, 'end')
         e_nome_pai.delete(0, 'end')
         e_nome_mae.delete(0, 'end')
-        #e_casados.delete(0, 'end')
+        e_casados.set('Sim')
         e_padrinho.delete(0, 'end')
         e_madrinha.delete(0, 'end')
         e_celebrante.delete(0, 'end')
@@ -210,7 +210,8 @@ def atualizar():
         e_nasc.insert(0, treev_lista[2])
         e_nome_pai.insert(0, treev_lista[3])
         e_nome_mae.insert(0, treev_lista[4])
-        #e_casados.select(0, treev_lista[5])
+        e_casados.get()
+        e_casados.insert(0, treev_lista[5])
         e_padrinho.insert(0, treev_lista[6])
         e_madrinha.insert(0, treev_lista[7])
         e_celebrante.insert(0, treev_lista[8])
@@ -244,7 +245,7 @@ def atualizar():
             e_nasc.delete(0, 'end')
             e_nome_pai.delete(0, 'end')
             e_nome_mae.delete(0, 'end')
-            #e_casados.delete(0, 'end')
+            e_casados.set('Sim')
             e_padrinho.delete(0, 'end')
             e_madrinha.delete(0, 'end')
             e_celebrante.delete(0, 'end')
@@ -267,6 +268,7 @@ def atualizar():
             e_nasc.delete(0, 'end')
             e_nome_pai.delete(0, 'end')
             e_nome_mae.delete(0, 'end')
+            e_casados.set('Sim')
             e_padrinho.delete(0, 'end')
             e_madrinha.delete(0, 'end')
             e_celebrante.delete(0, 'end')
@@ -295,7 +297,7 @@ def atualizar():
         blank_buttons = ImageTk.PhotoImage(blank_buttons)
 
         blank_buttons = Label(frameBotoes, image=blank_buttons, text="", width=400, compound=LEFT, relief="flat", anchor=NW,bg=co1)
-        blank_buttons.place(x=380, y=11)
+        blank_buttons.place(x=150, y=11) # x=150 provisorio, tam real x=380
 
         botao_confirmar = Button(frameBotoes, image=img_done, compound=LEFT, anchor=NW, text="   Salvar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10 bold'),bg=co11, fg=co1, command=update)
         botao_confirmar.place(x=20, y=11)
@@ -327,32 +329,232 @@ def deletar():
     except IndexError:
         messagebox.showerror('Erro', 'Seleciona um dos dados na tabela')
 
-# funcao criar relatorio PDF
-
-def abrir_relatorios():
-    webbrowser.open("Cadastros.html")
-
-def criar_relatorio():
-
-    con = lite.connect('dados.db')
-    cur = con.cursor()
-   
-    # Inserir dados na tabela:
-    cur.execute("SELECT * FROM Cadastro")
+def relatorios():
     
-    lista_itens = cur.fetchall()
-    print(lista_itens)
-    lista_itens=pd.DataFrame(lista_itens, columns=['id', 'nome', 'data_de_nasc', 'nome_pai', 'nome_mae', 'casados', 'padrinho', 'madrinha', 'celebrante', 'dia_batismo'])
-    lista_itens.to_html('Cadastros.html')
+    app_logo2 = Label(frameCima, image='', text="Relatorios", width=900, compound=LEFT, relief="flat", anchor=NW, font=('Verdana 20 bold'),bg=co1, fg=co4)
+    app_logo2.place(x=30, y=8)
     
-    # Commit das mudanças:
-    con.commit()
+    frameRel = Frame(janela, width=950, height=305, pady=0, padx=30, bg=co1, relief="flat")
+    frameRel.place(relx=0,rely=0.1, relwidth=1,relheight=0.9)
+    
+    frameBottomRel = Frame(janela,width=950, height=395,bg=co1, relief="flat")
+    frameBottomRel.grid(row=3, column=0, pady=0, padx=1, sticky=NSEW)
+    
+    l_nome = Label(frameRel, text="Nome", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
+    l_nome.place(x=0, y=10)
+    e_nome2 = Entry(frameRel, width=40, justify='left',relief="solid")
+    e_nome2.place(x=150, y=11)
+    
+    l_nasc = Label(frameRel, text="Data de Nascimento", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
+    l_nasc.place(x=0+425, y=10) # y=40
+    e_nasc2 = DateEntry(frameRel, width=12, background='darkblue', foreground='white', borderwidth=2, year=2022)
+    e_nasc2.place(x=150+425, y=11) #Y=41
 
-    # Fechar o banco de dados:
-    con.close()
+    l_nome_pai = Label(frameRel, text="Pai", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
+    l_nome_pai.place(x=0, y=40) # y=70
+    e_nome_pai2 = Entry(frameRel, width=40, justify='left',relief="solid")
+    e_nome_pai2.place(x=150, y=41) # y=71
+
+    l_nome_mae = Label(frameRel, text="Mãe", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
+    l_nome_mae.place(x=0+425, y=40) # y=100
+    e_nome_mae2 = Entry(frameRel, width=40, justify='left',relief="solid")
+    e_nome_mae2.place(x=150+425, y=41) # y=101
+
+    l_casados = Label(frameRel, text="Casados na Igreja", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
+    l_casados.place(x=0, y=70) # y=130
+
+    list_cb = ['Sim', 'Não']
+    e_casados2 = ttk.Combobox(frameRel, width=10, values = list_cb, state='readonly')
+    e_casados2.set('Sim')
+    e_casados2.place(x=150, y=71) # y=131
+
+    l_padrinho = Label(frameRel, text="Padrinho", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
+    l_padrinho.place(x=0, y=100) # y=160
+    e_padrinho2 = Entry(frameRel, width=40, justify='left',relief="solid")
+    e_padrinho2.place(x=150, y=101) # y=161
+
+    l_madrinha = Label(frameRel, text="Madrinha", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
+    l_madrinha.place(x=0+425, y=100) # y=190
+    e_madrinha2 = Entry(frameRel, width=40, justify='left',relief="solid")
+    e_madrinha2.place(x=150+425, y=101) # y=191
+
+    l_celebrante = Label(frameRel, text="Celebrante", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
+    l_celebrante.place(x=0, y=160-30) # y=220
+    e_celebrante2 = Entry(frameRel, width=40, justify='left',relief="solid")
+    e_celebrante2.place(x=150, y=161-30) # y=221
+
+    l_dia_batismo = Label(frameRel, text="Dia do Batismo", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
+    l_dia_batismo.place(x=0+425, y=160-30) # y=250
+    e_dia_batismo2 = DateEntry(frameRel, width=12, background='darkblue', foreground='white', borderwidth=2, year=2022)
+    e_dia_batismo2.place(x=150+425, y=161-30)  # y=251
     
-    # Abre o navegador padrao exibindo o relatorio:
-    abrir_relatorios()
+
+    
+    # funcao voltar
+    def voltar():
+
+        app_logo2.destroy()
+        frameRel.destroy()
+        botao_voltar.destroy()
+        botao_rel_ind.destroy()
+
+    # funcao atualizar
+    def atualizar_rel():
+        try:
+            treev_dados = tree.focus()
+            treev_dicionario = tree.item(treev_dados)
+            treev_lista = treev_dicionario['values']
+
+            e_nome2.delete(0, 'end')
+            e_nasc2.delete(0, 'end')
+            e_nome_pai2.delete(0, 'end')
+            e_nome_mae2.delete(0, 'end')
+            e_casados2.set('Sim')
+            e_padrinho2.delete(0, 'end')
+            e_madrinha2.delete(0, 'end')
+            e_celebrante2.delete(0, 'end')
+            e_dia_batismo2.delete(0, 'end')
+
+            id = int(treev_lista[0])
+            e_nome2.insert(0, treev_lista[1])
+            e_nasc2.insert(0, treev_lista[2])
+            e_nome_pai2.insert(0, treev_lista[3])
+            e_nome_mae2.insert(0, treev_lista[4])
+            e_casados2.get()
+            e_casados2.insert(0, treev_lista[5])
+            e_padrinho2.insert(0, treev_lista[6])
+            e_madrinha2.insert(0, treev_lista[7])
+            e_celebrante2.insert(0, treev_lista[8])
+            e_dia_batismo2.insert(0, treev_lista[9])
+        except IndexError:
+            messagebox.showerror('Erro', 'Seleciona um dos registros na tabela')
+    
+    # funcao criar relatorio PDF
+    def abrir_relatorio_ind():
+        webbrowser.open("CadastroInd.pdf")
+    # funcao gerar relatorio individual
+    def criar_relatorio_ind():
+
+        pdf = canvas.Canvas("CadastroInd.pdf")
+
+        nomeRel = e_nome2.get()
+        nascRel = e_nasc2.get()
+        nomepaiRel = e_nome_pai2.get()
+        nomemaeRel = e_nome_mae2.get()
+        casadosRel = e_casados2.get()
+        padrinhoRel = e_padrinho2.get()
+        madrinhaRel = e_madrinha2.get()
+        celebranteRel = e_celebrante2.get()
+        dia_batismoRel = e_dia_batismo2.get()
+
+        # layout 2
+        pdf.drawImage("main_files\icon\icon_logo.PNG", x=250, y=700, anchor=LEFT, width=100, height=100, mask="auto")
+        pdf.setFont("Helvetica-Bold", 14)
+        pdf.drawString(100+100, 660, 'COMPROVANTE DE BATISMO')
+        pdf.setFont("Helvetica", 12)
+        pdf.drawString(80, 650-30, 'Diocese de Palmeira dos Índios')
+        pdf.drawString(80, 630-30, 'Paróquia de Nossa Senhora do Rosário')
+        pdf.drawString(80, 610-30, 'Praça da Matriz, S/N - CENTRO')
+        pdf.drawString(80, 590-30, 'CEP 57.545-000, AL')
+        pdf.drawString(80, 570-30, 'TEL (82) 98103-2993')
+        
+        pdf.rect(50, 500, 500, 1, fill=False, stroke=True)
+        
+        pdf.setFont("Helvetica-Bold", 12)
+        pdf.drawString(60+20, 500-50, 'Nome: ')
+        pdf.drawString(320+20, 500-50, 'Data de Nascimento: ') # 650
+        pdf.drawString(60+20, 450-50, 'Pai: ') # 600
+        pdf.drawString(320+20, 450-50, 'Mãe: ') # 550
+        pdf.drawString(60+20, 400-50, 'Casados: ') # 500
+        pdf.drawString(60+20, 350-50, 'Padrinho: ') # 450
+        pdf.drawString(320+20, 350-50, 'Madrinha: ') # 400
+        pdf.drawString(60+20, 300-50, 'Celebrante: ') # 350
+        pdf.drawString(320+20, 300-50, 'Dia do Batismo: ') # 300
+
+        pdf.setFont("Helvetica", 11)
+        pdf.drawString(60+20, 470-40, nomeRel)
+        pdf.drawString(320+20, 470-40, nascRel) # 620+10
+        pdf.drawString(60+20, 420-40, nomepaiRel) # 570+10
+        pdf.drawString(320+20, 420-40, nomemaeRel) # 520+10
+        pdf.drawString(60+20, 370-40, casadosRel)# 470+10
+        pdf.drawString(60+20, 320-40, padrinhoRel)# 420+10
+        pdf.drawString(320+20, 320-40, madrinhaRel)# 370+10
+        pdf.drawString(60+20, 270-40, celebranteRel)# 320+10
+        pdf.drawString(320+20, 270-40, dia_batismoRel)# 270+10
+        # layout 2
+        
+        pdf.showPage()
+        pdf.save()
+        
+        # Abre o navegador padrao exibindo o relatorio:
+        abrir_relatorio_ind()
+        
+    # funcao gerar relatorio geral
+    #def criar_relatorio_ger():
+        
+        
+    # botao voltar
+    botao_voltar = Button(frameRel, image=img_back, compound=LEFT, anchor=NW, text="   Voltar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=voltar)
+    botao_voltar.place(x=20, y=200)
+
+    # botao relatorio ind.
+    botao_rel_ind = Button(frameRel, image=img_botao_rel_ind, compound=LEFT, anchor=NW, text="   Relatorio Individual".upper(), width=235, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=criar_relatorio_ind)
+    botao_rel_ind.place(x=560, y=200)
+    
+    # botao relatorio geral
+    botao_rel = Button(frameRel, image=img_botao_rel_ger, compound=LEFT, anchor=NW, text="   Relatorio Geral".upper(), width=235, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0)
+    botao_rel.place(x=560, y=280)
+
+    # botao atualizar
+    botao_atualizarRel = Button(frameRel, image=img_update, compound=LEFT, anchor=NW, text="   Atualizar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=atualizar_rel)
+    botao_atualizarRel.place(x=20, y=280)
+    
+    def mostrar():
+        # creating a treeview with dual scrollbars
+        tabela_head = ['#ID','Nome', 'Data de Nascimento', 'Nome do Pai', 'Nome da Mãe', 'Casados na Igreja', 'Padrinho', 'Madrinha', 'Celebrante', 'Dia do Batismo']
+
+        global tree, values, id
+
+        tree = ttk.Treeview(frameBottomRel, selectmode="extended",columns=tabela_head, show="headings")
+        
+        # vertical scrollbar
+        vsb = ttk.Scrollbar(frameBottomRel, orient="vertical", command=tree.yview)
+
+        # horizontal scrollbar
+        hsb = ttk.Scrollbar(frameBottomRel, orient="horizontal", command=tree.xview)
+
+        tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+        tree.grid(column=0, row=0, sticky='nsew')
+        vsb.grid(column=1, row=0, sticky='ns')
+        hsb.grid(column=0, row=1, sticky='ew')
+        frameBottomRel.grid_rowconfigure(0, weight=12)
+
+        h=[30,100,100,100,100,100,100,100,100,100]
+        mh=[30,100,100,100,100,100,100,100,100,100]
+        n=0
+
+        for col in tabela_head:
+            tree.heading(col, text=col.title(), anchor=CENTER)
+
+            # adjust the column's width to the header string
+            tree.column(col, width=h[n],minwidth=mh[n],anchor=CENTER)
+            n+=1
+        
+        lista_itens = []
+        
+        with con:
+            cur = con.cursor()
+            cur.execute("SELECT * FROM Cadastro")
+            rows = cur.fetchall()
+            for row in rows:
+                lista_itens.append(row)
+
+        count = 0
+        for items in lista_itens:
+            tree.insert(parent='', index='end', iid = count, values=(items[0], items[1], items[2], items[3], items[4], items[5], items[6], items[7], items[8], items[9]))
+            count += 1
+
+    mostrar()
     
 ####################### VARIAVEIS DE ENTRADA #######################
 
@@ -378,12 +580,16 @@ e_nome_mae.place(x=150, y=101)
 
 l_casados = Label(frameMeio, text="Casados na Igreja", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
 l_casados.place(x=20, y=130)
-e_casados = StringVar('')
-cb_casados = ttk.Combobox(frameMeio, width=10, textvariable=e_casados)
-cb_casados['values'] = ['Sim', 'Não']
-cb_casados['state'] = 'readonly'
-cb_casados.bind('<<ComboboxSelected>>', e_casados.get())
-cb_casados.place(x=150, y=131)
+
+# e_casados = StringVar('')
+list_cb = ['Sim', 'Não']
+# TRABALHAR COMBOBOX PARA DAR GET NO VALOR 'SIM' OU 'NAO'
+e_casados = ttk.Combobox(frameMeio, width=10, values = list_cb, state='readonly')
+e_casados.set('Sim')
+#e_casados['values'] = ['Sim', 'Não']
+#e_casados['state'] = 'readonly'
+#e_casados.bind('<<ComboboxSelected>>', e_casados.get())
+e_casados.place(x=150, y=131)
 
 l_padrinho = Label(frameMeio, text="Padrinho", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
 l_padrinho.place(x=20, y=160)
@@ -423,11 +629,11 @@ img_cancel = Image.open('main_files\icon\icon_cancel.png')
 img_cancel = img_cancel.resize((50, 50))
 img_cancel = ImageTk.PhotoImage(img_cancel)
 
-img_update = Image.open('main_files\icon\icon_edit.png')
-img_update = img_update.resize((50, 50))
-img_update = ImageTk.PhotoImage(img_update)
+img_edit = Image.open('main_files\icon\icon_edit.png')
+img_edit = img_edit.resize((50, 50))
+img_edit = ImageTk.PhotoImage(img_edit)
 
-botao_atualizar = Button(frameBotoes, image=img_update, compound=LEFT, anchor=NW, text="   Editar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=atualizar)
+botao_atualizar = Button(frameBotoes, image=img_edit, compound=LEFT, anchor=NW, text="   Editar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=atualizar)
 botao_atualizar.place(x=200, y=11)
 
 # Botao Deletar
@@ -439,11 +645,27 @@ botao_deletar = Button(frameBotoes, image=img_delete, compound=LEFT, anchor=NW, 
 botao_deletar.place(x=380, y=11)
 
 # Botao ver Registros
+img_back = Image.open('main_files\icon\icon_goback.png')
+img_back = img_back.resize((50, 50))
+img_back = ImageTk.PhotoImage(img_back)
+
+img_botao_rel_ind  = Image.open('main_files\icon\icon_item.png')
+img_botao_rel_ind = img_botao_rel_ind.resize((50, 50))
+img_botao_rel_ind = ImageTk.PhotoImage(img_botao_rel_ind)
+
+img_botao_rel_ger  = Image.open('main_files\icon\icon_item.png')
+img_botao_rel_ger = img_botao_rel_ger.resize((50, 50))
+img_botao_rel_ger = ImageTk.PhotoImage(img_botao_rel_ger)
+
 img_item  = Image.open('main_files\icon\icon_item.png')
 img_item = img_item.resize((50, 50))
 img_item = ImageTk.PhotoImage(img_item)
 
-botao_ver = Button(frameBotoes, image=img_item, compound=LEFT, anchor=NW, text="   Registros".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=criar_relatorio)
+img_update  = Image.open('main_files\icon\icon_update.png')
+img_update = img_update.resize((50, 50))
+img_update = ImageTk.PhotoImage(img_update)
+
+botao_ver = Button(frameBotoes, image=img_item, compound=LEFT, anchor=NW, text="   Registros".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=relatorios)
 botao_ver.place(x=560, y=11)
 
 ####################### TELA DE PRINT DOS REGISTROS DO DB #######################
