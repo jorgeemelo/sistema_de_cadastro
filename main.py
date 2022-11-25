@@ -1,21 +1,15 @@
-# add sistema de leitura de acentos (uft8) #
-
 from tkinter import*
 from tkinter import Tk, StringVar, ttk
-import tkinter.font as tkFont
 from tkinter import messagebox
-from tkinter import filedialog as fd
 from PIL import Image, ImageTk
 from tkcalendar import*
-import pandas as pd
+# import pandas as pd
 import webbrowser
 from platypus import*
 import sqlite3 as lite
-from datetime import datetime
+# from datetime import datetime
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
-#from reportlab.pdfbase import pdfmetrics
-#from reportlab.pdfbase.ttfonts import TTFont
 
 # Criando banco de dados
 con = lite.connect('dados.db')
@@ -581,14 +575,9 @@ e_nome_mae.place(x=150, y=101)
 l_casados = Label(frameMeio, text="Casados na Igreja", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
 l_casados.place(x=20, y=130)
 
-# e_casados = StringVar('')
 list_cb = ['Sim', 'Não']
-# TRABALHAR COMBOBOX PARA DAR GET NO VALOR 'SIM' OU 'NAO'
 e_casados = ttk.Combobox(frameMeio, width=10, values = list_cb, state='readonly')
 e_casados.set('Sim')
-#e_casados['values'] = ['Sim', 'Não']
-#e_casados['state'] = 'readonly'
-#e_casados.bind('<<ComboboxSelected>>', e_casados.get())
 e_casados.place(x=150, y=131)
 
 l_padrinho = Label(frameMeio, text="Padrinho", height=1,anchor=NW, font=('Ivy 10 bold'), bg=co1, fg=co4)
@@ -620,7 +609,6 @@ botao_inserir = Button(frameBotoes, image=img_add, compound=LEFT, anchor=NW, tex
 botao_inserir.place(x=20, y=11)
 
 # Botao Atualizar/Editar
-
 img_done = Image.open('main_files\icon\icon_done.png')
 img_done = img_done.resize((50, 50))
 img_done = ImageTk.PhotoImage(img_done)
