@@ -10,7 +10,7 @@ import sqlite3 as lite
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.pagesizes import landscape
-import babel
+
 # Criando banco de dados
 con = lite.connect('dados.db')
 def conecta_bd():
