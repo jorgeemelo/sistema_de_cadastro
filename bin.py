@@ -291,10 +291,10 @@ def atualizar():
         blank_buttons = Label(frameBotoes, image=blank_buttons, text="", width=400, compound=LEFT, relief="flat", anchor=NW,bg=co1)
         blank_buttons.place(x=380, y=11) # x=150 provisorio, tam real x=380
 
-        botao_confirmar = Button(frameBotoes, image=img_done, compound=LEFT, anchor=NW, text="   Salvar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10 bold'),bg=co11, fg=co1, command=update)
+        botao_confirmar = Button(frameBotoes, image=img_done, compound=LEFT, anchor=NW, text="   Salvar", width=150, overrelief=RIDGE,  font=('ivy 10 bold'),bg=co11, fg=co1, command=update)
         botao_confirmar.place(x=20, y=11)
         
-        botao_cancelar = Button(frameBotoes, image=img_cancel, compound=LEFT, anchor=NW, text="   Cancelar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10 bold'),bg=co10, fg=co1, command=cancelar)
+        botao_cancelar = Button(frameBotoes, image=img_cancel, compound=LEFT, anchor=NW, text="   Cancelar", width=150, overrelief=RIDGE,  font=('ivy 10 bold'),bg=co10, fg=co1, command=cancelar)
         botao_cancelar.place(x=200, y=11)
 
     except IndexError:
@@ -508,6 +508,71 @@ def relatorios():
     def abrir_relatorio_ger():
         webbrowser.open("CadastroGer.pdf")
     
+    # funcao abrir multiplos individuais
+    def abrir_mult_rel_ind():
+        webbrowser.open("CadastroMultInd.pdf")
+    
+    # funcao gerar multiplos individuais
+    def criar_mult_rel_ind():
+        
+        pdf = canvas.Canvas("CadastroMultInd.pdf")
+        
+        lista_itens = []
+        
+        with con:
+            cur = con.cursor()
+            cur.execute("SELECT * FROM Cadastro WHERE dia_batismo LIKE '%"+e_dia_batismo2.get()+"%' order by ID")
+            
+            rows = cur.fetchall()
+            for row in rows:
+                lista_itens.append(row)
+                
+        linha = 440+70
+        linhaDiv = 393+40+70
+        for items in lista_itens:
+            linha = linha - 20
+            linhaDiv = linhaDiv - 20
+            
+            pdf.setFont("Helvetica", 9)
+            pdf.drawImage("main_files\icon\icon_logo.PNG", x=240, y=700, anchor=LEFT, width=100, height=100, mask="auto")
+            pdf.setFont("Helvetica-Bold", 14)
+            pdf.drawString(100+100, 660, 'COMPROVANTE DE BATISMO')
+            pdf.setFont("Helvetica", 12)
+            pdf.drawString(80, 650-30, 'Diocese de Palmeira dos Índios')
+            pdf.drawString(80, 630-30, 'Paróquia de Nossa Senhora do Rosário')
+            pdf.drawString(80, 610-30, 'Praça da Matriz, S/N - CENTRO')
+            pdf.drawString(80, 590-30, 'CEP 57.545-000, AL')
+            pdf.drawString(80, 570-30, 'TEL (82) 98103-2993')
+            
+            pdf.rect(50, 500, 500, 1, fill=False, stroke=True)
+            
+            pdf.setFont("Helvetica-Bold", 12)
+            pdf.drawString(60+20, 500-50, 'Nome: ')
+            pdf.drawString(320+20, 500-50, 'Data de Nascimento: ') # 650
+            pdf.drawString(60+20, 450-50, 'Pai: ') # 600
+            pdf.drawString(320+20, 450-50, 'Mãe: ') # 550
+            pdf.drawString(60+20, 400-50, 'Casados: ') # 500
+            pdf.drawString(60+20, 350-50, 'Padrinho: ') # 450
+            pdf.drawString(320+20, 350-50, 'Madrinha: ') # 400
+            pdf.drawString(60+20, 300-50, 'Celebrante: ') # 350
+            pdf.drawString(320+20, 300-50, 'Dia do Batismo: ') # 300
+            
+            pdf.setFont("Helvetica", 11)
+            pdf.drawString(60+20, 470-40, "{nome}".format(nome=items[1]))
+            pdf.drawString(320+20, 470-40, "{nasc}".format(nasc=items[2])) # 620+10
+            pdf.drawString(60+20, 420-40, "{pai}".format(pai=items[3])) # 570+10
+            pdf.drawString(320+20, 420-40, "{mae}".format(mae=items[4]) ) # 520+10
+            pdf.drawString(60+20, 370-40, "{cas}".format(cas=items[5]))# 470+10
+            pdf.drawString(60+20, 320-40, "{pad}".format(pad=items[6]))# 420+10
+            pdf.drawString(320+20, 320-40, "{mad}".format(mad=items[7]))# 370+10
+            pdf.drawString(60+20, 270-40, "{cel}".format(cel=items[8]))# 320+10
+            pdf.drawString(320+20, 270-40, "{bat}".format(bat=items[9]))# 270+10
+            pdf.showPage()
+        pdf.save()
+        
+        # Abre o navegador padrao exibindo o relatorio:
+        abrir_mult_rel_ind()
+        
     # funcao gerar relatorio geral
     def criar_relatorio_ger():
         pdf = canvas.Canvas("CadastroGer.pdf", pagesize=landscape(A4))
@@ -530,6 +595,7 @@ def relatorios():
             pdf.drawString(50, 550, 'Data dos batizados: {bat}'.format(bat=databtsm))
             
             pdf.setFont("Helvetica-Bold", 7)
+            pdf.drawString(50, 440+70, 'ID')
             pdf.drawString(100, 440+70, 'Nome')
             pdf.drawString(170, 440+70, 'Nascimento')
             pdf.drawString(250, 440+70, 'Nome do Pai')
@@ -546,11 +612,13 @@ def relatorios():
                 
         linha = 440+70
         linhaDiv = 393+40+70
+        count = 0
         for items in lista_itens:
             linha = linha - 20
             linhaDiv = linhaDiv - 20
-            
+            count += 1
             pdf.setFont("Helvetica", 7)
+            pdf.drawString(20, linha, "{count}".format(count=count))
             pdf.drawString(50, linha, "{nome}".format(nome=items[1]))
             pdf.drawString(170, linha, "{nasc}".format(nasc=items[2]))
             pdf.drawString(220, linha, "{pai}".format(pai=items[3]))
@@ -561,7 +629,7 @@ def relatorios():
             pdf.drawString(650, linha, "{cel}".format(cel=items[8]))
             pdf.drawString(750, linha, "{bat}".format(bat=items[9]))
             pdf.rect(x=50, y=linhaDiv, width=735, height=0.1, fill=False, stroke=True)
-        
+            
         pdf.showPage()
         pdf.save()
         
@@ -569,24 +637,28 @@ def relatorios():
         abrir_relatorio_ger()
     
     # botao voltar
-    botao_voltar = Button(frameRel, image=img_back, compound=LEFT, anchor=NW, text="   Voltar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=voltar)
-    botao_voltar.place(x=40, y=200)
+    botao_voltar = Button(frameRel, image=img_back, compound=LEFT, anchor=NW, text="   Voltar", width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=voltar)
+    botao_voltar.place(x=40, y=200+10)
 
     # botao atualizar
-    botao_atualizarRel = Button(frameRel, image=img_update, compound=LEFT, anchor=NW, text="   Atualizar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=atualizar_rel)
+    botao_atualizarRel = Button(frameRel, image=img_update, compound=LEFT, anchor=NW, text="   Atualizar", width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=atualizar_rel)
     botao_atualizarRel.place(x=40, y=280)
     
     # botao relatorio ind.
-    botao_rel_ind = Button(frameRel, image=img_botao_rel, compound=LEFT, anchor=NW, text="   Relatorio Individual".upper(), width=235, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=criar_relatorio_ind)
+    botao_rel_ind = Button(frameRel, image=img_botao_rel, compound=LEFT, anchor=NW, text="   Relatorio Individual", width=235, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=criar_relatorio_ind)
     botao_rel_ind.place(x=600, y=200)
     
+    # botao multiplos relatorios individuais
+    botao_mult_rel_ind = Button(frameRel, image=img_botao_rel, compound=LEFT, anchor=NW, text="   Multiplos Relatorios Individuais", width=235, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=criar_mult_rel_ind)
+    botao_mult_rel_ind.place(x=600, y=250)
+    
     # botao relatorio geral
-    botao_rel = Button(frameRel, image=img_botao_rel, compound=LEFT, anchor=NW, text="   Relatorio Geral".upper(), width=235, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=criar_relatorio_ger)
-    botao_rel.place(x=600, y=280)
+    botao_rel = Button(frameRel, image=img_botao_rel, compound=LEFT, anchor=NW, text="   Relatorio Geral", width=235, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=criar_relatorio_ger)
+    botao_rel.place(x=600, y=300)
     
     # botao buscar
-    botao_buscar = Button(frameRel, image=img_update, compound=LEFT, anchor=NW, text="   Buscar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=buscar)
-    botao_buscar.place(x=320, y=200)
+    botao_buscar = Button(frameRel, image=img_update, compound=LEFT, anchor=NW, text="   Buscar", width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=buscar)
+    botao_buscar.place(x=320, y=200+10)
     
     def mostrar2():
         # creating a treeview with dual scrollbars
@@ -636,7 +708,7 @@ def relatorios():
     mostrar2()
     
     # restaurar pesquisa
-    botao_resBuscar = Button(frameRel, image=img_update, compound=LEFT, anchor=NW, text="   Restaurar Pesquisa".upper(), width=230, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=mostrar2)
+    botao_resBuscar = Button(frameRel, image=img_update, compound=LEFT, anchor=NW, text="   Restaurar Pesquisa", width=230, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=mostrar2)
     botao_resBuscar.place(x=280, y=280)
 
 ####################### VARIAVEIS DE ENTRADA #######################
@@ -694,7 +766,7 @@ img_add = Image.open('main_files\icon\icon_add.png')
 img_add = img_add.resize((50, 50))
 img_add = ImageTk.PhotoImage(img_add)
 
-botao_inserir = Button(frameBotoes, image=img_add, compound=LEFT, anchor=NW, text="   Cadastrar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=inserir)
+botao_inserir = Button(frameBotoes, image=img_add, compound=LEFT, anchor=NW, text="   Cadastrar", width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=inserir)
 botao_inserir.place(x=20, y=11)
 
 # Botao Atualizar/Editar
@@ -710,7 +782,7 @@ img_edit = Image.open('main_files\icon\icon_edit.png')
 img_edit = img_edit.resize((50, 50))
 img_edit = ImageTk.PhotoImage(img_edit)
 
-botao_atualizar = Button(frameBotoes, image=img_edit, compound=LEFT, anchor=NW, text="   Editar".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=atualizar)
+botao_atualizar = Button(frameBotoes, image=img_edit, compound=LEFT, anchor=NW, text="   Editar", width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=atualizar)
 botao_atualizar.place(x=200, y=11)
 
 # Botao Deletar
@@ -718,7 +790,7 @@ img_delete  = Image.open('main_files\icon\icon_delete.png')
 img_delete = img_delete.resize((50, 50))
 img_delete = ImageTk.PhotoImage(img_delete)
 
-botao_deletar = Button(frameBotoes, image=img_delete, compound=LEFT, anchor=NW, text="   Excluir".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=deletar)
+botao_deletar = Button(frameBotoes, image=img_delete, compound=LEFT, anchor=NW, text="   Excluir", width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=deletar)
 botao_deletar.place(x=380, y=11)
 
 # Botao ver Registros
@@ -727,7 +799,7 @@ img_back = img_back.resize((50, 50))
 img_back = ImageTk.PhotoImage(img_back)
 
 img_botao_rel  = Image.open('main_files\icon\icon_export.png')
-img_botao_rel = img_botao_rel.resize((50, 50))
+img_botao_rel = img_botao_rel.resize((40, 40))
 img_botao_rel = ImageTk.PhotoImage(img_botao_rel)
 
 img_item  = Image.open('main_files\icon\icon_item.png')
@@ -738,7 +810,7 @@ img_update  = Image.open('main_files\icon\icon_update.png')
 img_update = img_update.resize((50, 50))
 img_update = ImageTk.PhotoImage(img_update)
 
-botao_ver = Button(frameBotoes, image=img_item, compound=LEFT, anchor=NW, text="   Registros".upper(), width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=relatorios)
+botao_ver = Button(frameBotoes, image=img_item, compound=LEFT, anchor=NW, text="   Registros", width=150, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=relatorios)
 botao_ver.place(x=560, y=11)
 
 ####################### TELA DE PRINT DOS REGISTROS DO DB #######################
