@@ -465,9 +465,9 @@ def relatorios():
             messagebox.showerror('Erro', 'Seleciona um dos registros na tabela e aperte no botão "Atualizar" para gerar o relatório desejado')
         else:
             pdf.drawImage("main_files\icon\icon_logo.PNG", x=240, y=700, anchor=LEFT, width=100, height=100, mask="auto")
-            pdf.setFont("Helvetica-Bold", 14)
+            pdf.setFont("Helvetica-Bold", 12)
             pdf.drawString(100+100, 660, 'COMPROVANTE DE BATISMO')
-            pdf.setFont("Helvetica", 12)
+            pdf.setFont("Helvetica", 10)
             pdf.drawString(80, 650-30, 'Diocese de Palmeira dos Índios')
             pdf.drawString(80, 630-30, 'Paróquia de Nossa Senhora do Rosário')
             pdf.drawString(80, 610-30, 'Praça da Matriz, S/N - CENTRO')
@@ -476,7 +476,7 @@ def relatorios():
             
             pdf.rect(50, 500, 500, 1, fill=False, stroke=True)
             
-            pdf.setFont("Helvetica-Bold", 12)
+            pdf.setFont("Helvetica-Bold", 10)
             pdf.drawString(60+20, 500-50, 'Nome: ')
             pdf.drawString(320+20, 500-50, 'Data de Nascimento: ') # 650
             pdf.drawString(60+20, 450-50, 'Pai: ') # 600
@@ -487,7 +487,7 @@ def relatorios():
             pdf.drawString(60+20, 300-50, 'Celebrante: ') # 350
             pdf.drawString(320+20, 300-50, 'Dia do Batismo: ') # 300
             
-            pdf.setFont("Helvetica", 11)
+            pdf.setFont("Helvetica", 8)
             pdf.drawString(60+20, 470-40, nomeRel)
             pdf.drawString(320+20, 470-40, nascRel) # 620+10
             pdf.drawString(60+20, 420-40, nomepaiRel) # 570+10
@@ -500,6 +500,8 @@ def relatorios():
             
             pdf.showPage()
             pdf.save()
+            
+            messagebox.showinfo('Sucesso', 'Relatorio gerado com sucesso')
             
             # Abre o navegador padrao exibindo o relatorio:
             abrir_relatorio_ind()
@@ -535,9 +537,9 @@ def relatorios():
             
             pdf.setFont("Helvetica", 9)
             pdf.drawImage("main_files\icon\icon_logo.PNG", x=240, y=700, anchor=LEFT, width=100, height=100, mask="auto")
-            pdf.setFont("Helvetica-Bold", 14)
+            pdf.setFont("Helvetica-Bold", 12)
             pdf.drawString(100+100, 660, 'COMPROVANTE DE BATISMO')
-            pdf.setFont("Helvetica", 12)
+            pdf.setFont("Helvetica", 10)
             pdf.drawString(80, 650-30, 'Diocese de Palmeira dos Índios')
             pdf.drawString(80, 630-30, 'Paróquia de Nossa Senhora do Rosário')
             pdf.drawString(80, 610-30, 'Praça da Matriz, S/N - CENTRO')
@@ -546,7 +548,7 @@ def relatorios():
             
             pdf.rect(50, 500, 500, 1, fill=False, stroke=True)
             
-            pdf.setFont("Helvetica-Bold", 12)
+            pdf.setFont("Helvetica-Bold", 10)
             pdf.drawString(60+20, 500-50, 'Nome: ')
             pdf.drawString(320+20, 500-50, 'Data de Nascimento: ') # 650
             pdf.drawString(60+20, 450-50, 'Pai: ') # 600
@@ -557,7 +559,7 @@ def relatorios():
             pdf.drawString(60+20, 300-50, 'Celebrante: ') # 350
             pdf.drawString(320+20, 300-50, 'Dia do Batismo: ') # 300
             
-            pdf.setFont("Helvetica", 11)
+            pdf.setFont("Helvetica", 8)
             pdf.drawString(60+20, 470-40, "{nome}".format(nome=items[1]))
             pdf.drawString(320+20, 470-40, "{nasc}".format(nasc=items[2])) # 620+10
             pdf.drawString(60+20, 420-40, "{pai}".format(pai=items[3])) # 570+10
@@ -570,11 +572,14 @@ def relatorios():
             pdf.showPage()
         pdf.save()
         
+        messagebox.showinfo('Sucesso', 'Relatorios gerados com sucesso')
+        
         # Abre o navegador padrao exibindo o relatorio:
         abrir_mult_rel_ind()
         
     # funcao gerar relatorio geral
-    def criar_relatorio_ger():
+    def criar_rel_ger():
+        ''' 
         pdf = canvas.Canvas("CadastroGer.pdf", pagesize=landscape(A4))
         
         pdf.setFont("Helvetica-Bold", 14)
@@ -632,7 +637,167 @@ def relatorios():
             
         pdf.showPage()
         pdf.save()
+        '''
+        ######## MODELO 2 #######
         
+        pdf = canvas.Canvas("CadastroGer.pdf", pagesize=A4)
+        
+        pdf.setFont("Helvetica-Bold", 10)
+        pdf.drawString(220, 780, 'RELATÓRIO GERAL DE BATISMO')
+        pdf.rect(x=50, y=750, width=500, height=1, fill=False, stroke=True)
+        pdf.setFont("Helvetica", 7)
+        
+        lista_itens = []
+        
+        def pag01():
+        
+            with con:
+                cur = con.cursor()
+                
+                #databtsm = e_dia_batismo2.get()
+                #cur.execute("SELECT * FROM Cadastro WHERE dia_batismo LIKE '%"+e_dia_batismo2.get()+"%' order by ID")
+                #pdf.setFont("Helvetica", 8)
+                #
+                #if databtsm == "":
+                #    databtsm = "Geral"
+                #    
+                #pdf.drawString(50, 780, 'Data dos batizados: {bat}'.format(bat=databtsm))
+                
+                cur.execute("SELECT * FROM Cadastro WHERE id BETWEEN 0 AND 14")
+                rows = cur.fetchall()
+                for row in rows:
+                    lista_itens.append(row)
+                    
+            linha = 780
+            linhaDiv = 740
+            
+            count = 0
+            
+            for items in lista_itens:
+                linha = linha - 50
+                linhaDiv = linhaDiv - 50
+                count += 1
+                
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(50, linha, 'ID:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(60, linha, "{count}".format(count=count))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(70, linha, 'Nome:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(95, linha, "{nome}".format(nome=items[1]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(260, linha, 'Nascimento:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(300, linha, "{nasc}".format(nasc=items[2]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(340, linha, 'Pai:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(380, linha, "{pai}".format(pai=items[3]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(70, linha-10, 'Mãe:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(95, linha-10, "{mae}".format(mae=items[4]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(255, linha-10, 'Casados na Igreja:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(315, linha-10, "{cas}".format(cas=items[5]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(340, linha-10, 'Padrinho:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(380, linha-10, "{pad}".format(pad=items[6]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(70, linha-20, 'Madrinha:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(100, linha-20, "{mad}".format(mad=items[7]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(270, linha-20, 'Celebrante:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(305, linha-20, "{cel}".format(cel=items[8]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(430, linha-20, 'Data do Batismo:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(500-15, linha-20, "{bat}".format(bat=items[9]))
+                
+                pdf.rect(x=50, y=linhaDiv+10, width=500, height=0.1, fill=False, stroke=True)
+                
+            pdf.showPage()
+            
+        
+        def pag02():
+            
+            with con:
+                cur = con.cursor()
+                cur.execute("SELECT * FROM Cadastro WHERE id BETWEEN 14 AND 28")
+                
+                rows = cur.fetchall()
+                for row in rows:
+                    lista_itens.append(row)
+                    
+            linha = 780 + 50
+            linhaDiv = 740 + 50
+            count = 14
+            for items in lista_itens:
+                linha = linha - 50
+                linhaDiv = linhaDiv - 50
+                count += 1
+                
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(50, linha, 'ID:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(60, linha, "{count}".format(count=count))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(70, linha, 'Nome:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(95, linha, "{nome}".format(nome=items[1]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(260, linha, 'Nascimento:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(300, linha, "{nasc}".format(nasc=items[2]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(340, linha, 'Pai:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(380, linha, "{pai}".format(pai=items[3]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(70, linha-10, 'Mãe:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(95, linha-10, "{mae}".format(mae=items[4]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(255, linha-10, 'Casados na Igreja:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(315, linha-10, "{cas}".format(cas=items[5]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(340, linha-10, 'Padrinho:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(380, linha-10, "{pad}".format(pad=items[6]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(70, linha-20, 'Madrinha:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(100, linha-20, "{mad}".format(mad=items[7]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(270, linha-20, 'Celebrante:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(305, linha-20, "{cel}".format(cel=items[8]))
+                pdf.setFont("Helvetica-Bold", 6)
+                pdf.drawString(430, linha-20, 'Data do Batismo:')
+                pdf.setFont("Helvetica", 6)
+                pdf.drawString(500-15, linha-20, "{bat}".format(bat=items[9]))
+                
+                pdf.rect(x=50, y=linhaDiv+10, width=500, height=0.1, fill=False, stroke=True)
+                
+            pdf.showPage()
+            
+        pag01()
+        print(lista_itens)
+        
+        lista_itens.clear()
+        print(lista_itens)
+        
+        pag02()
+        print(lista_itens)
+        
+        pdf.save()
+        messagebox.showinfo('Sucesso', 'Relatorio gerado com sucesso')
         # Abre o navegador padrao exibindo o relatorio:
         abrir_relatorio_ger()
     
@@ -653,7 +818,7 @@ def relatorios():
     botao_mult_rel_ind.place(x=600, y=250)
     
     # botao relatorio geral
-    botao_rel = Button(frameRel, image=img_botao_rel, compound=LEFT, anchor=NW, text="   Relatorio Geral", width=235, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=criar_relatorio_ger)
+    botao_rel = Button(frameRel, image=img_botao_rel, compound=LEFT, anchor=NW, text="   Relatorio Geral", width=235, overrelief=RIDGE,  font=('ivy 10'),bg=co1, fg=co0, command=criar_rel_ger)
     botao_rel.place(x=600, y=300)
     
     # botao buscar
